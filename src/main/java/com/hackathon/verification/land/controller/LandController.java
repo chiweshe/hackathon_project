@@ -21,6 +21,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/lands")
+@CrossOrigin
 @Tag(name = "Land Controller", description = "Operations for land verification and management")
 public class LandController {
 

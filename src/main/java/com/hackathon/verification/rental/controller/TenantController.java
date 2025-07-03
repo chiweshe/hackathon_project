@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/api/v1/tenants")
 @Tag(name = "Tenant API", description = "API for tenant management and verification")
 public class TenantController {

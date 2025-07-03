@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/api/v1/landlords")
 @Tag(name = "Landlord API", description = "API for landlord management and verification")
 public class LandlordController {
@@ -91,40 +92,34 @@ public class LandlordController {
 
     @GetMapping("/search")
     @Operation(summary = "Search landlords", description = "Searches for landlords by name, ID number, email, phone, or address")
-    public ResponseEntity<ApiResponse<List<Landlord>>> searchLandlords(
+    public ResponseEntity<List<Landlord>> searchLandlords(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String idNumber,
             @RequestParam(required = false) String email,
             @RequestParam(required = false) String phone,
             @RequestParam(required = false) String address) {
 
-        logger.info("Searching for landlords with name: {}, idNumber: {}, email: {}, phone: {}, address: {}", 
+        logger.info("Searching for landlords with name: {}, idNumber: {}, email: {}, phone: {}, address: {}",
                    name, idNumber, email, phone, address);
 
         if (idNumber != null && !idNumber.isEmpty()) {
             return landlordRepository.findByIdNumber(idNumber)
-                    .map(landlord -> ResponseEntity.ok(new ApiResponse<>(List.of(landlord))))
-                    .orElse(ResponseEntity.ok(ApiResponse.emptyList("No landlord found with ID number: " + idNumber)));
+                    .map(landlord -> ResponseEntity.ok(List.of(landlord)))
+                    .orElse(ResponseEntity.ok(List.of()));
         } else if (email != null && !email.isEmpty()) {
             return landlordRepository.findByEmail(email)
-                    .map(landlord -> ResponseEntity.ok(new ApiResponse<>(List.of(landlord))))
-                    .orElse(ResponseEntity.ok(ApiResponse.emptyList("No landlord found with email: " + email)));
+                    .map(landlord -> ResponseEntity.ok(List.of(landlord)))
+                    .orElse(ResponseEntity.ok(List.of()));
         } else if (phone != null && !phone.isEmpty()) {
             return landlordRepository.findByPhone(phone)
-                    .map(landlord -> ResponseEntity.ok(new ApiResponse<>(List.of(landlord))))
-                    .orElse(ResponseEntity.ok(ApiResponse.emptyList("No landlord found with phone: " + phone)));
+                    .map(landlord -> ResponseEntity.ok(List.of(landlord)))
+                    .orElse(ResponseEntity.ok(List.of()));
         } else if (name != null && !name.isEmpty()) {
             List<Landlord> landlords = landlordRepository.findByNameContainingIgnoreCase(name);
-            if (landlords.isEmpty()) {
-                return ResponseEntity.ok(ApiResponse.emptyList("No landlords found with name containing: " + name));
-            }
-            return ResponseEntity.ok(new ApiResponse<>(landlords));
+            return ResponseEntity.ok(landlords);
         } else if (address != null && !address.isEmpty()) {
             List<Landlord> landlords = landlordRepository.findByAddressContainingIgnoreCase(address);
-            if (landlords.isEmpty()) {
-                return ResponseEntity.ok(ApiResponse.emptyList("No landlords found with address containing: " + address));
-            }
-            return ResponseEntity.ok(new ApiResponse<>(landlords));
+            return ResponseEntity.ok(landlords);
         } else {
             return ResponseEntity.badRequest().build();
         }

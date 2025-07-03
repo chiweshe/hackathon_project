@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/api/vehicles")
 @Tag(name = "Vehicle Controller", description = "Operations for vehicle verification and management")
 public class VehicleController {
